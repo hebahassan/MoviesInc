@@ -1,6 +1,6 @@
 package com.example.moviesinc.domain.local
 
-import com.example.moviesinc.model.ImageConfig
+import com.example.moviesinc.model.ImageConfigurations
 
 interface IPrefHelper {
 
@@ -8,7 +8,7 @@ interface IPrefHelper {
 
     fun getGuestSession(): String
 
-    fun saveImageConfig(imageConfig: ImageConfig)
+    fun saveImageConfig(imageConfig: ImageConfigurations)
 
-    fun getImageConfig(): ImageConfig
+    fun getImageConfig(): ImageConfigurations
 }

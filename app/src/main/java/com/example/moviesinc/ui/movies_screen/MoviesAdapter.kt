@@ -16,6 +16,11 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
 
     private val moviesList = ArrayList<MovieResult>()
     private var imagePath = ""
+    private var onMovieClickListener: OnMovieClickListener? = null
+
+    interface OnMovieClickListener {
+        fun onMovieClick(movieId: Int)
+    }
 
     inner class MovieItemView(itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -25,7 +30,19 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
             itemView.movieTitle.text = movie.title
             itemView.movieReleaseDate.text = movie.releaseDate
             itemView.averageRating.text = "${movie.voteAverage} / 10"
+
+            itemView.row.setOnClickListener { onMovieClickListener?.onMovieClick(movie.id) }
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieItemView {
+        return MovieItemView(LayoutInflater.from(parent.context).inflate(R.layout.row_movie, parent, false))
+    }
+
+    override fun getItemCount(): Int = moviesList.count()
+
+    override fun onBindViewHolder(holder: MovieItemView, position: Int) {
+        holder.bind(moviesList[position], imagePath)
     }
 
     fun updateList(updatedList: List<MovieResult>) {
@@ -38,13 +55,7 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
         imagePath = "$url$posterSize"
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieItemView {
-        return MovieItemView(LayoutInflater.from(parent.context).inflate(R.layout.row_movie, parent, false))
-    }
-
-    override fun getItemCount(): Int = moviesList.count()
-
-    override fun onBindViewHolder(holder: MovieItemView, position: Int) {
-        holder.bind(moviesList[position], imagePath)
+    fun setMovieClickListener(onMovieClickListener: OnMovieClickListener) {
+        this.onMovieClickListener = onMovieClickListener
     }
 }

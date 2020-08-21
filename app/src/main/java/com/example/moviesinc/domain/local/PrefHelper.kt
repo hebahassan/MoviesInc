@@ -1,7 +1,7 @@
 package com.example.moviesinc.domain.local
 
 import android.content.SharedPreferences
-import com.example.moviesinc.model.ImageConfig
+import com.example.moviesinc.model.ImageConfigurations
 import com.example.moviesinc.utils.Constant
 import com.google.gson.Gson
 import javax.inject.Inject
@@ -19,16 +19,16 @@ class PrefHelper @Inject constructor(
         return pref.getString(Constant.Pref.SESSION_ID, "") ?: ""
     }
 
-    override fun saveImageConfig(imageConfig: ImageConfig) {
+    override fun saveImageConfig(imageConfig: ImageConfigurations) {
         val gson = Gson()
         val json = gson.toJson(imageConfig)
         editor.putString(Constant.Pref.CONFIG, json)
         editor.apply()
     }
 
-    override fun getImageConfig(): ImageConfig {
+    override fun getImageConfig(): ImageConfigurations {
         val gson = Gson()
         val json = pref.getString(Constant.Pref.CONFIG, "") ?: ""
-        return gson.fromJson(json, ImageConfig::class.java)
+        return gson.fromJson(json, ImageConfigurations::class.java)
     }
 }

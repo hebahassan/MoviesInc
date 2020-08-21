@@ -10,7 +10,7 @@
         android:id="@+id/logoIV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_logo"
+        app:srcCompat="@drawable/ic_logo"
         app:layout_constraintBottom_toTopOf="@+id/logoTV"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

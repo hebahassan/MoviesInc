@@ -1,11 +1,8 @@
 package com.example.moviesinc.domain.repository
 
 import com.example.moviesinc.domain.local.IPrefHelper
-import com.example.moviesinc.domain.local.PrefHelper
 import com.example.moviesinc.domain.remote.IApiHelper
-import com.example.moviesinc.model.ConfigurationModel
-import com.example.moviesinc.model.ImageConfig
-import com.example.moviesinc.model.MoviesModel
+import com.example.moviesinc.model.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -15,11 +12,11 @@ class DataRepository @Inject constructor(
     private val prefHelper: IPrefHelper, private val apiHelper: IApiHelper)
     : IDataRepository {
 
-    override fun saveImageConfig(imageConfig: ImageConfig) {
+    override fun saveImageConfig(imageConfig: ImageConfigurations) {
         prefHelper.saveImageConfig(imageConfig)
     }
 
-    override fun getImageConfig(): ImageConfig {
+    override fun getImageConfig(): ImageConfigurations {
         return prefHelper.getImageConfig()
     }
 
@@ -33,5 +30,13 @@ class DataRepository @Inject constructor(
         return apiHelper.getNowPlayingMovies(apiKey, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun getMovieDetails(movieId: Int, apiKey: String): Observable<MovieDetailsModel> {
+        return apiHelper.getMovieDetails(movieId, apiKey)
+    }
+
+    override fun getMovieCredits(movieId: Int, apiKey: String): Observable<MovieCreditsModel> {
+        return apiHelper.getMovieCredits(movieId, apiKey)
     }
 }

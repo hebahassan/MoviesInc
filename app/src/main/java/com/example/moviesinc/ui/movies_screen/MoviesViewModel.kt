@@ -3,7 +3,7 @@ package com.example.moviesinc.ui.movies_screen
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.moviesinc.domain.repository.IDataRepository
-import com.example.moviesinc.model.ImageConfig
+import com.example.moviesinc.model.ImageConfigurations
 import com.example.moviesinc.ui.base.BaseViewModel
 import com.example.moviesinc.utils.Constant
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepos
         getNowPlayingMovies()
     }
 
-    private fun saveImageConfig(imageConfig: ImageConfig) = dataRepository.saveImageConfig(imageConfig)
+    private fun saveImageConfig(imageConfig: ImageConfigurations) = dataRepository.saveImageConfig(imageConfig)
 
     fun getImageConfig() = dataRepository.getImageConfig()
 
@@ -26,7 +26,7 @@ class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepos
         disposable.add(
             dataRepository.getConfiguration(Constant.API.API_KEY)
                 .doOnNext {
-                    val imageConfig = ImageConfig(it.images.secureBaseUrl, it.images.posterSizes)
+                    val imageConfig = ImageConfigurations(it.images.secureBaseUrl, it.images.posterSizes, it.images.profileSizes)
                     saveImageConfig(imageConfig)
                 }
                 .flatMap { dataRepository.getNowPlayingMovies(Constant.API.API_KEY, 1) }

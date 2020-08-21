@@ -9,10 +9,14 @@ import com.example.moviesinc.R
 import com.example.moviesinc.app.ViewModelProviderFactory
 import com.example.moviesinc.model.MovieResult
 import com.example.moviesinc.ui.base.BaseActivity
+import com.example.moviesinc.ui.movie_details_screen.MovieDetailsActivity
+import com.example.moviesinc.utils.Constant
 import kotlinx.android.synthetic.main.activity_movies.*
+import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 
-class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies), SwipeRefreshLayout.OnRefreshListener{
+class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies),
+    SwipeRefreshLayout.OnRefreshListener, MoviesAdapter.OnMovieClickListener{
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -20,11 +24,6 @@ class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies), Swip
     lateinit var adapter: MoviesAdapter
 
     private lateinit var viewModel: MoviesViewModel
-
-    override fun onRefresh() {
-        swipeRefresh.isRefreshing = false
-        viewModel.getNowPlayingMovies()
-    }
 
     override fun inject() {
         viewModel = ViewModelProvider(this, providerFactory)[MoviesViewModel::class.java]
@@ -48,6 +47,15 @@ class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies), Swip
         }
     }
 
+    override fun onRefresh() {
+        swipeRefresh.isRefreshing = false
+        viewModel.getNowPlayingMovies()
+    }
+
+    override fun onMovieClick(movieId: Int) {
+        startActivity<MovieDetailsActivity>(Constant.Extras.MOVIE_ID to movieId)
+    }
+
     private fun renderLoadingState() {
         progressBar.visibility = View.VISIBLE
         errorTV.visibility = View.GONE
@@ -61,6 +69,7 @@ class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies), Swip
 
         val config = viewModel.getImageConfig()
         adapter.setUrlToImage(config.secureBaseUrl, config.posterSizes.first())
+        adapter.setMovieClickListener(this)
 
         moviesRV.adapter = adapter
         adapter.updateList(data)

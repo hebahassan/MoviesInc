@@ -9,6 +9,8 @@ object Constant {
         const val GUEST_SESSION = "authentication/guest_session/new"
         const val NOW_PLAYING = "movie/now_playing"
         const val CONFIGURATION = "configuration"
+        const val DETAILS = "movie"
+        const val CREDITS = "credits"
     }
 
     object Params {
@@ -20,5 +22,9 @@ object Constant {
         const val PREF_NAME = "movies_pref"
         const val SESSION_ID = "session_id"
         const val CONFIG = "image_config"
+    }
+
+    object Extras {
+        const val MOVIE_ID = "movie_id"
     }
 }

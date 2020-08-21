@@ -27,4 +27,4 @@ data class Images(
     val stillSizes: List<String>
 )
 
-data class ImageConfig(val secureBaseUrl: String, val posterSizes: List<String>)
+data class ImageConfigurations(val secureBaseUrl: String, val posterSizes: List<String>, val profileSizes: List<String>)
