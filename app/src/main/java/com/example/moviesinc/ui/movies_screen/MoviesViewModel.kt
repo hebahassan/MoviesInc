@@ -2,16 +2,14 @@ package com.example.moviesinc.ui.movies_screen
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.moviesinc.domain.repository.DataRepository
+import com.example.moviesinc.domain.repository.IDataRepository
 import com.example.moviesinc.model.ImageConfig
+import com.example.moviesinc.ui.base.BaseViewModel
 import com.example.moviesinc.utils.Constant
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class MoviesViewModel @Inject constructor(
-    private val disposable: CompositeDisposable, private val dataRepository: DataRepository)
-    : ViewModel() {
+class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepository)
+    : BaseViewModel() {
 
     private val _moviesState = MutableLiveData<MoviesStates>()
     val moviesState: LiveData<MoviesStates> get() = _moviesState
@@ -51,10 +49,5 @@ class MoviesViewModel @Inject constructor(
                     _moviesState.value = MoviesStates.ErrorState(it.message ?: "Error in retrieving data")
                 })
         )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        disposable.clear()
     }
 }

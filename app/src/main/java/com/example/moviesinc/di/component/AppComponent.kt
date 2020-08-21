@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.moviesinc.app.MoviesApplication
 import com.example.moviesinc.di.module.ActivityModule
 import com.example.moviesinc.di.module.AppModule
-import com.example.moviesinc.di.module.RxModule
+import com.example.moviesinc.di.module.DomainModule
 import com.example.moviesinc.di.module.ViewModelFactoryModule
 import com.example.moviesinc.domain.local.PrefHelper
 import com.example.moviesinc.domain.repository.DataRepository
@@ -18,15 +18,11 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
     AppModule::class,
+    DomainModule::class,
     ActivityModule::class,
-    ViewModelFactoryModule::class,
-    RxModule::class])
+    ViewModelFactoryModule::class])
 
 interface AppComponent: AndroidInjector<MoviesApplication> {
-
-    fun prefHelper(): PrefHelper
-
-    fun dataRepository(): DataRepository
 
     @Component.Builder
     interface Builder {

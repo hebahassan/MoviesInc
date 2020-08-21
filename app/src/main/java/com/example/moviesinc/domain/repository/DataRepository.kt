@@ -1,5 +1,6 @@
 package com.example.moviesinc.domain.repository
 
+import com.example.moviesinc.domain.local.IPrefHelper
 import com.example.moviesinc.domain.local.PrefHelper
 import com.example.moviesinc.domain.remote.IApiHelper
 import com.example.moviesinc.model.ConfigurationModel
@@ -11,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class DataRepository @Inject constructor(
-    private val prefHelper: PrefHelper, private val apiHelper: IApiHelper)
+    private val prefHelper: IPrefHelper, private val apiHelper: IApiHelper)
     : IDataRepository {
 
     override fun saveImageConfig(imageConfig: ImageConfig) {

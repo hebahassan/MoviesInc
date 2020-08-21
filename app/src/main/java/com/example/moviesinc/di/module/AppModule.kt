@@ -17,21 +17,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-abstract class AppModule {
+class AppModule {
 
     companion object {
-
-        @Singleton
-        @Provides
-        fun provideSharedPref(application: Application): SharedPreferences {
-            return application.getSharedPreferences(Constant.Pref.PREF_NAME, MODE_PRIVATE)
-        }
-
-        @Singleton
-        @Provides
-        fun provideSharedPrefEditor(pref: SharedPreferences): SharedPreferences.Editor {
-            return pref.edit()
-        }
 
         @Singleton
         @Provides
@@ -41,12 +29,6 @@ abstract class AppModule {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-        }
-
-        @Singleton
-        @Provides
-        fun provideApiHelper(retrofit: Retrofit): IApiHelper {
-            return retrofit.create(IApiHelper::class.java)
         }
 
         @Singleton
