@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MoviesInc</string>
+    <string name="movies_inc">Movies Inc.</string>
+    <string name="refresh">Please refresh the page</string>
+</resources>
