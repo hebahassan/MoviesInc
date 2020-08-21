@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.moviesinc.domain.repository.DataRepository
 import com.example.moviesinc.model.ImageConfig
-import com.example.moviesinc.model.MovieResult
 import com.example.moviesinc.utils.Constant
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -34,30 +33,24 @@ class MoviesViewModel @Inject constructor(
                 }
                 .flatMap { dataRepository.getNowPlayingMovies(Constant.API.API_KEY, 1) }
                 .doOnSubscribe { _moviesState.value = MoviesStates.LoadingState }
+                .map {
+                    val config = getImageConfig()
+                    val url =  config.secureBaseUrl
+                    val posterSize = config.posterSizes.first()
+
+                    it.results.forEach { movie ->
+                        val newPath = "$url$posterSize${movie.posterPath}"
+                        movie.posterPath = newPath
+                    }
+                    return@map it.results
+                }
+                .map { it.sortedBy { movie -> movie.title } }
                 .subscribe({
-                    setImagesUrls(it.results)
+                    _moviesState.value = MoviesStates.SuccessState(it)
                 }, {
                     _moviesState.value = MoviesStates.ErrorState(it.message ?: "Error in retrieving data")
                 })
         )
-    }
-
-    private fun setImagesUrls(movies: List<MovieResult>) {
-        val config = getImageConfig()
-        val url =  config.secureBaseUrl
-        val posterSize = config.posterSizes.first()
-
-        movies.forEach {
-            val newPath = "$url$posterSize${it.posterPath}"
-            it.posterPath = newPath
-        }
-
-        sortMoviesAlphabetically(movies)
-    }
-
-    private fun sortMoviesAlphabetically(movies: List<MovieResult>){
-        val sortedList = movies.sortedBy { it.title }
-        _moviesState.value = MoviesStates.SuccessState(sortedList)
     }
 
     override fun onCleared() {

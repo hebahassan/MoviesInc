@@ -19,7 +19,7 @@ class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies){
     @Inject
     lateinit var adapter: MoviesAdapter
 
-    lateinit var viewModel: MoviesViewModel
+    private lateinit var viewModel: MoviesViewModel
 
     override fun inject() {
         viewModel = ViewModelProvider(this, providerFactory)[MoviesViewModel::class.java]
