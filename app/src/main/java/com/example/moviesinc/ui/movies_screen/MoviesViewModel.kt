@@ -20,9 +20,9 @@ class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepos
 
     private fun saveImageConfig(imageConfig: ImageConfig) = dataRepository.saveImageConfig(imageConfig)
 
-    private fun getImageConfig() = dataRepository.getImageConfig()
+    fun getImageConfig() = dataRepository.getImageConfig()
 
-    private fun getNowPlayingMovies() {
+    fun getNowPlayingMovies() {
         disposable.add(
             dataRepository.getConfiguration(Constant.API.API_KEY)
                 .doOnNext {
@@ -31,18 +31,7 @@ class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepos
                 }
                 .flatMap { dataRepository.getNowPlayingMovies(Constant.API.API_KEY, 1) }
                 .doOnSubscribe { _moviesState.value = MoviesStates.LoadingState }
-                .map {
-                    val config = getImageConfig()
-                    val url =  config.secureBaseUrl
-                    val posterSize = config.posterSizes.first()
-
-                    it.results.forEach { movie ->
-                        val newPath = "$url$posterSize${movie.posterPath}"
-                        movie.posterPath = newPath
-                    }
-                    return@map it.results
-                }
-                .map { it.sortedBy { movie -> movie.title } }
+                .map { it.results.sortedBy { movie -> movie.title } }
                 .subscribe({
                     _moviesState.value = MoviesStates.SuccessState(it)
                 }, {

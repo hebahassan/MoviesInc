@@ -1,6 +1,8 @@
 package com.example.moviesinc.di.module
 
 import com.example.moviesinc.di.annotation.MoviesScope
+import com.example.moviesinc.di.ui_module.MoviesActivityModule
+import com.example.moviesinc.di.ui_module.MoviesViewModelModule
 import com.example.moviesinc.ui.movies_screen.MoviesActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

@@ -15,12 +15,13 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
     : RecyclerView.Adapter<MoviesAdapter.MovieItemView>() {
 
     private val moviesList = ArrayList<MovieResult>()
+    private var imagePath = ""
 
     inner class MovieItemView(itemView: View): RecyclerView.ViewHolder(itemView) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(movie: MovieResult) {
-            requestManager.load(movie.posterPath).into(itemView.moviePoster)
+        fun bind(movie: MovieResult, imagePath: String) {
+            requestManager.load("$imagePath${movie.posterPath}").into(itemView.moviePoster)
             itemView.movieTitle.text = movie.title
             itemView.movieReleaseDate.text = movie.releaseDate
             itemView.averageRating.text = "${movie.voteAverage} / 10"
@@ -33,6 +34,10 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
         notifyDataSetChanged()
     }
 
+    fun setUrlToImage(url: String, posterSize: String) {
+        imagePath = "$url$posterSize"
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieItemView {
         return MovieItemView(LayoutInflater.from(parent.context).inflate(R.layout.row_movie, parent, false))
     }
@@ -40,6 +45,6 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
     override fun getItemCount(): Int = moviesList.count()
 
     override fun onBindViewHolder(holder: MovieItemView, position: Int) {
-        holder.bind(moviesList[position])
+        holder.bind(moviesList[position], imagePath)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.moviesinc.di.module
+package com.example.moviesinc.di.ui_module
 
 import androidx.lifecycle.ViewModel
 import com.bumptech.glide.RequestManager
