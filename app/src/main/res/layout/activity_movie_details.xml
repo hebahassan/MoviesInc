@@ -61,10 +61,9 @@
         android:id="@+id/overviewTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textColor="@color/text_details"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/yearTV"
         app:layout_constraintStart_toStartOf="@+id/genreTV"
         app:layout_constraintTop_toBottomOf="@+id/genreTV"
@@ -99,14 +98,14 @@
         android:id="@+id/castTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/cast"
-        android:textSize="20sp"
-        android:textStyle="bold"
         android:textColor="@color/text_white"
-        app:layout_constraintTop_toBottomOf="@+id/overviewTV"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/overviewTV"
         app:layout_constraintStart_toStartOf="@id/overviewTV"
-        app:layout_constraintEnd_toEndOf="@id/overviewTV"/>
+        app:layout_constraintTop_toBottomOf="@+id/overviewTV" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/actorsRV"

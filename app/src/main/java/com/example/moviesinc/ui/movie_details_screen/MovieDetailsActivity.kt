@@ -21,9 +21,10 @@ class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_m
     lateinit var providerFactory: ViewModelProviderFactory
     @Inject
     lateinit var requestManager: RequestManager
+    @Inject
+    lateinit var adapter: CastAdapter
 
     lateinit var viewModel: MovieDetailsViewModel
-    private val genreList = ArrayList<String>()
 
     override fun inject() {
         viewModel = ViewModelProvider(this, providerFactory)[MovieDetailsViewModel::class.java]
@@ -55,14 +56,16 @@ class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_m
     private fun renderSuccess(data: Pair<MovieDetailsModel, MovieCreditsModel>) {
         progressBar.visibility = View.GONE
 
-        data.first.genres.forEach { genreList.add(it.name) }
-
         requestManager.load("${viewModel.getPosterPath()}${data.first.posterPath}").into(moviePoster)
         titleTV.text = data.first.title
         overviewTV.text = data.first.overview
         ratingTV.text = "${data.first.voteAverage} / 10"
         yearTV.text = data.first.releaseDate.split("-")[0]
-        genreTV.text = genreList.joinToString(", ")
+        genreTV.text = data.first.genres.joinToString(", ") { it.name }
+
+        adapter.setImagePath(viewModel.getProfilePath())
+        actorsRV.adapter = adapter
+        adapter.updateCastList(data.second.cast)
     }
 
     private fun renderError(error: String) {

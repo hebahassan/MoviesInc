@@ -2,6 +2,7 @@ package com.example.moviesinc.di.module
 
 import com.example.moviesinc.di.annotation.MovieDetailsScope
 import com.example.moviesinc.di.annotation.MoviesScope
+import com.example.moviesinc.di.ui_module.MovieDetailsActivityModule
 import com.example.moviesinc.di.ui_module.MovieDetailsViewModelModule
 import com.example.moviesinc.di.ui_module.MoviesActivityModule
 import com.example.moviesinc.di.ui_module.MoviesViewModelModule
@@ -18,6 +19,6 @@ abstract class ActivityModule {
     abstract fun contributeMoviesActivity(): MoviesActivity
 
     @MovieDetailsScope
-    @ContributesAndroidInjector(modules = [MovieDetailsViewModelModule::class])
+    @ContributesAndroidInjector(modules = [MovieDetailsViewModelModule::class, MovieDetailsActivityModule::class])
     abstract fun contributeMovieDetailsActivity(): MovieDetailsActivity
 }

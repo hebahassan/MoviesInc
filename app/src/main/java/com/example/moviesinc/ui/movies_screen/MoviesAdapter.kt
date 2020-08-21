@@ -18,14 +18,10 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
     private var imagePath = ""
     private var onMovieClickListener: OnMovieClickListener? = null
 
-    interface OnMovieClickListener {
-        fun onMovieClick(movieId: Int)
-    }
-
     inner class MovieItemView(itemView: View): RecyclerView.ViewHolder(itemView) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(movie: MovieResult, imagePath: String) {
+        fun bind(movie: MovieResult) {
             requestManager.load("$imagePath${movie.posterPath}").into(itemView.moviePoster)
             itemView.movieTitle.text = movie.title
             itemView.movieReleaseDate.text = movie.releaseDate
@@ -42,7 +38,7 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
     override fun getItemCount(): Int = moviesList.count()
 
     override fun onBindViewHolder(holder: MovieItemView, position: Int) {
-        holder.bind(moviesList[position], imagePath)
+        holder.bind(moviesList[position])
     }
 
     fun updateList(updatedList: List<MovieResult>) {
@@ -57,5 +53,9 @@ class MoviesAdapter @Inject constructor(private val requestManager: RequestManag
 
     fun setMovieClickListener(onMovieClickListener: OnMovieClickListener) {
         this.onMovieClickListener = onMovieClickListener
+    }
+
+    interface OnMovieClickListener {
+        fun onMovieClick(movieId: Int)
     }
 }

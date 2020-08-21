@@ -28,7 +28,7 @@
         android:textColor="@color/text_white"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/characterTV"
+        app:layout_constraintBottom_toTopOf="@+id/characterName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/actorIV"
@@ -36,7 +36,7 @@
         tools:text="Dixie Egerickx" />
 
     <TextView
-        android:id="@+id/characterTV"
+        android:id="@+id/characterName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="16sp"
