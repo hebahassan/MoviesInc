@@ -72,12 +72,10 @@ class DataRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun getMovieDetails(movieId: Int, apiKey: String): Observable<MovieDetailsModel> {
-        return apiHelper.getMovieDetails(movieId, apiKey)
-    }
-
-    override fun getMovieCredits(movieId: Int, apiKey: String): Observable<MovieCreditsModel> {
-        return apiHelper.getMovieCredits(movieId, apiKey)
+    override fun getMovieDetails(movieId: Int, apiKey: String, appendToResponse: String): Observable<MovieDetailsModel> {
+        return apiHelper.getMovieDetails(movieId, apiKey, appendToResponse)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun postMovieRating(

@@ -1,6 +1,5 @@
 package com.example.moviesinc.ui.movie_details_screen
 
-import com.example.moviesinc.model.MovieCreditsModel
 import com.example.moviesinc.model.MovieDetailsModel
 
 sealed class MovieDetailsStates
@@ -9,7 +8,7 @@ sealed class FetchDetailsState: MovieDetailsStates() {
 
     object Loading: FetchDetailsState()
 
-    data class SuccessDetails(val data: Pair<MovieDetailsModel, MovieCreditsModel>): FetchDetailsState()
+    data class SuccessDetails(val data: MovieDetailsModel): FetchDetailsState()
 
     data class ErrorDetails(val error: String): FetchDetailsState()
 }

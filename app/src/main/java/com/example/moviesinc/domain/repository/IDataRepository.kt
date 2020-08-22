@@ -33,9 +33,7 @@ interface IDataRepository {
 
     fun getNowPlayingMovies(apiKey: String, page: Int): Observable<MoviesModel>
 
-    fun getMovieDetails(movieId: Int, apiKey: String): Observable<MovieDetailsModel>
-
-    fun getMovieCredits(movieId: Int, apiKey: String): Observable<MovieCreditsModel>
+    fun getMovieDetails(movieId: Int, apiKey: String, appendToResponse: String): Observable<MovieDetailsModel>
 
     fun postMovieRating(movieId: Int, apiKey: String, guestSessionId: String, ratingBody: RatingBody): Completable
 

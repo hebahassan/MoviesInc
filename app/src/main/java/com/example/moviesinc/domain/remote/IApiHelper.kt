@@ -16,29 +16,21 @@ interface IApiHelper {
 
     @GET(Constant.API.NOW_PLAYING)
     fun getNowPlayingMovies(@Query(Constant.Params.API_KEY) apiKey: String,
-                            @Query(Constant.Params.PAGE) page: Int)
-            : Observable<MoviesModel>
+                            @Query(Constant.Params.PAGE) page: Int): Observable<MoviesModel>
 
-    @GET("${Constant.API.MOVIE}/{${Constant.Params.MOVIE_ID}}")
+    @GET(Constant.API.MOVIE_DETAILS)
     fun getMovieDetails(@Path(Constant.Params.MOVIE_ID) movieId: Int,
-                        @Query(Constant.Params.API_KEY) apiKey: String)
-            : Observable<MovieDetailsModel>
+                        @Query(Constant.Params.API_KEY) apiKey: String,
+                        @Query(Constant.Params.APPEND_TO_RESPONSE) creditResponse: String): Observable<MovieDetailsModel>
 
-    @GET("${Constant.API.MOVIE}/{movie_id}/${Constant.API.CREDITS}")
-    fun getMovieCredits(@Path(Constant.Params.MOVIE_ID) movieId: Int,
-                        @Query(Constant.Params.API_KEY) apiKey: String)
-            : Observable<MovieCreditsModel>
-
-    @POST("${Constant.API.MOVIE}/{movie_id}/${Constant.API.RATE_MOVIE}")
+    @POST(Constant.API.RATE_MOVIE)
     @Headers("${Constant.Params.CONTENT_TYPE}: ${Constant.API.CONTENT_TYPE}")
     fun postMovieRating(@Path(Constant.Params.MOVIE_ID) movieId: Int,
                         @Query(Constant.Params.API_KEY) apiKey: String,
                         @Query(Constant.Params.GUEST_SESSION_ID) guestSessionId: String,
-                        @Body ratingBody: RatingBody)
-            : Completable
+                        @Body ratingBody: RatingBody): Completable
 
     @GET(Constant.API.RATED_MOVIES)
     fun getRatedMovies(@Path(Constant.Params.GUEST_SESSION_ID) sessionId: String,
-                       @Query(Constant.Params.API_KEY) apiKey: String)
-            : Observable<RatedMoviesModel>
+                       @Query(Constant.Params.API_KEY) apiKey: String): Observable<RatedMoviesModel>
 }

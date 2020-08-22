@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.RequestManager
 import com.example.moviesinc.R
 import com.example.moviesinc.app.ViewModelProviderFactory
-import com.example.moviesinc.model.MovieCreditsModel
 import com.example.moviesinc.model.MovieDetailsModel
 import com.example.moviesinc.ui.base.BaseActivity
 import com.example.moviesinc.utils.Constant
@@ -81,20 +80,20 @@ class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_
     }
 
     @SuppressLint("SetTextI18n")
-    private fun renderSuccessDetails(data: Pair<MovieDetailsModel, MovieCreditsModel>) {
+    private fun renderSuccessDetails(data: MovieDetailsModel) {
         progressBar.visibility = View.GONE
 
-        requestManager.load("${viewModel.getPosterPath()}${data.first.posterPath}")
+        requestManager.load("${viewModel.getPosterPath()}${data.posterPath}")
             .into(moviePoster)
-        titleTV.text = data.first.title
-        overviewTV.text = data.first.overview
-        ratingTV.text = "${data.first.voteAverage} / 10"
-        yearTV.text = data.first.releaseDate.split("-")[0]
-        genreTV.text = data.first.genres.joinToString(", ") { it.name }
+        titleTV.text = data.title
+        overviewTV.text = data.overview
+        ratingTV.text = "${data.voteAverage} / 10"
+        yearTV.text = data.releaseDate.split("-")[0]
+        genreTV.text = data.genres.joinToString(", ") { it.name }
 
         adapter.setImagePath(viewModel.getProfilePath())
         actorsRV.adapter = adapter
-        adapter.updateCastList(data.second.cast)
+        adapter.updateCastList(data.credits.cast)
     }
 
     private fun renderSuccessRating() {

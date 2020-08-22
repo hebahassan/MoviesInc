@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import com.example.moviesinc.domain.local.db.RatedMoviesEntity
 import com.example.moviesinc.domain.repository.IDataRepository
 import com.example.moviesinc.model.ImageConfigurations
-import com.example.moviesinc.model.MovieCreditsModel
 import com.example.moviesinc.model.MovieDetailsModel
 import com.example.moviesinc.model.RatingBody
 import com.example.moviesinc.ui.base.BaseViewModel
 import com.example.moviesinc.utils.Constant
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -70,19 +68,10 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
         )
     }
 
-    //TODO: combine 2 apis with append_to_request
     fun getMovieDetails(movieId: Int) {
         disposable.add(
-            Observable.zip(dataRepository.getMovieDetails(movieId, Constant.API.API_KEY),
-                dataRepository.getMovieCredits(movieId, Constant.API.API_KEY),
-                BiFunction<MovieDetailsModel, MovieCreditsModel, Pair<MovieDetailsModel, MovieCreditsModel>> { t1, t2 ->
-                    Pair(t1, t2)
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    _fetchDetailsState.value = FetchDetailsState.Loading
-                }
+            dataRepository.getMovieDetails(movieId, Constant.API.API_KEY, Constant.API.CREDITS)
+                .doOnSubscribe { _fetchDetailsState.value = FetchDetailsState.Loading }
                 .subscribe({
                     _fetchDetailsState.value = FetchDetailsState.SuccessDetails(it)
                 }, {
