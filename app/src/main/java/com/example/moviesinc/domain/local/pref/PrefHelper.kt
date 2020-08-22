@@ -1,4 +1,4 @@
-package com.example.moviesinc.domain.local
+package com.example.moviesinc.domain.local.pref
 
 import android.content.SharedPreferences
 import com.example.moviesinc.model.ImageConfigurations

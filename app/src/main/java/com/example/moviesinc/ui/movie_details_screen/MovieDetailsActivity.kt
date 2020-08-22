@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_movie_details.*
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
-class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_movie_details) {
+class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_movie_details) {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -25,26 +25,41 @@ class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_m
     lateinit var adapter: CastAdapter
 
     lateinit var viewModel: MovieDetailsViewModel
+    private var movieId = 0
 
     override fun inject() {
         viewModel = ViewModelProvider(this, providerFactory)[MovieDetailsViewModel::class.java]
     }
 
     override fun init() {
+        movieId = intent.getIntExtra(Constant.Extras.MOVIE_ID, 0)
+
+        setRatingBar()
+
         viewModel.movieDetailsState.observe(this, Observer {
             render(it)
         })
 
-        viewModel.getMovieDetails(intent.getIntExtra(Constant.Extras.MOVIE_ID, 0))
+        viewModel.getMovieDetails(movieId)
     }
 
     override fun render(state: MovieDetailsStates) {
-        when(state) {
-            is MovieDetailsStates.LoadingDetails -> renderLoading()
+        when (state) {
+            is FetchDetailsState -> when (state) {
+                is FetchDetailsState.Loading -> renderLoading()
 
-            is MovieDetailsStates.SuccessDetails -> renderSuccess(state.data)
+                is FetchDetailsState.SuccessDetails -> renderSuccessDetails(state.data)
 
-            is MovieDetailsStates.ErrorDetails -> renderError(state.error)
+                is FetchDetailsState.ErrorDetails -> renderError(state.error)
+            }
+
+            is RatingState -> when (state) {
+                is RatingState.LoadRating -> renderLoading()
+
+                is RatingState.SuccessRating -> renderSuccessRating()
+
+                is RatingState.ErrorRating -> renderErrorRating(state.error)
+            }
         }
     }
 
@@ -53,10 +68,11 @@ class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_m
     }
 
     @SuppressLint("SetTextI18n")
-    private fun renderSuccess(data: Pair<MovieDetailsModel, MovieCreditsModel>) {
+    private fun renderSuccessDetails(data: Pair<MovieDetailsModel, MovieCreditsModel>) {
         progressBar.visibility = View.GONE
 
-        requestManager.load("${viewModel.getPosterPath()}${data.first.posterPath}").into(moviePoster)
+        requestManager.load("${viewModel.getPosterPath()}${data.first.posterPath}")
+            .into(moviePoster)
         titleTV.text = data.first.title
         overviewTV.text = data.first.overview
         ratingTV.text = "${data.first.voteAverage} / 10"
@@ -68,8 +84,27 @@ class MovieDetailsActivity: BaseActivity<MovieDetailsStates>(R.layout.activity_m
         adapter.updateCastList(data.second.cast)
     }
 
+    private fun renderSuccessRating() {
+        progressBar.visibility = View.GONE
+        rating.setIsIndicator(true)
+    }
+
     private fun renderError(error: String) {
         progressBar.visibility = View.GONE
         toast(error)
+    }
+
+    private fun renderErrorRating(error: String) {
+        renderError(error)
+        rating.rating = 0f
+    }
+
+    private fun setRatingBar() {
+        if (rating.rating >= 1)
+            rating.setIsIndicator(true)
+        else
+            rating.setOnRatingBarChangeListener { _, rate, _ ->
+                viewModel.rateMovie(movieId, rate.toDouble())
+            }
     }
 }

@@ -3,8 +3,8 @@ package com.example.moviesinc.di.module
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.moviesinc.domain.local.IPrefHelper
-import com.example.moviesinc.domain.local.PrefHelper
+import com.example.moviesinc.domain.local.pref.IPrefHelper
+import com.example.moviesinc.domain.local.pref.PrefHelper
 import com.example.moviesinc.domain.remote.IApiHelper
 import com.example.moviesinc.domain.repository.DataRepository
 import com.example.moviesinc.domain.repository.IDataRepository
@@ -40,7 +40,10 @@ class DomainModule {
         @Singleton
         @Provides
         fun provideIPrefHelper(pref: SharedPreferences, editor: SharedPreferences.Editor): IPrefHelper {
-            return PrefHelper(pref, editor)
+            return PrefHelper(
+                pref,
+                editor
+            )
         }
 
         @Singleton

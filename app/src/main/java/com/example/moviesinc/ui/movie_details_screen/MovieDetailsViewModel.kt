@@ -6,6 +6,7 @@ import com.example.moviesinc.domain.repository.IDataRepository
 import com.example.moviesinc.model.ImageConfigurations
 import com.example.moviesinc.model.MovieCreditsModel
 import com.example.moviesinc.model.MovieDetailsModel
+import com.example.moviesinc.model.RatingBody
 import com.example.moviesinc.ui.base.BaseViewModel
 import com.example.moviesinc.utils.Constant
 import io.reactivex.Observable
@@ -23,6 +24,8 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
 
     private fun getImageConfig() = dataRepository.getImageConfig()
 
+    private fun getGuestSession() = dataRepository.getGuestSession()
+
     fun getPosterPath(): String {
         return "${imageConfigurations.secureBaseUrl}${imageConfigurations.posterSizes.first()}"
     }
@@ -31,6 +34,7 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
         return "${imageConfigurations.secureBaseUrl}${imageConfigurations.profileSizes.first()}"
     }
 
+    //TODO: combine 2 apis with append_to_request
     fun getMovieDetails(movieId: Int) {
         disposable.add(
             Observable.zip(dataRepository.getMovieDetails(movieId, Constant.API.API_KEY),
@@ -40,11 +44,25 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { _movieDetailsState.value = MovieDetailsStates.LoadingDetails }
+                .doOnSubscribe {
+                    _movieDetailsState.value = FetchDetailsState.Loading
+                }
                 .subscribe({
-                    _movieDetailsState.value = MovieDetailsStates.SuccessDetails(it)
+                    _movieDetailsState.value = FetchDetailsState.SuccessDetails(it)
                 }, {
-                    _movieDetailsState.value = MovieDetailsStates.ErrorDetails("Error retrieving data")
+                    _movieDetailsState.value = FetchDetailsState.ErrorDetails("Error retrieving data")
+                })
+        )
+    }
+
+    fun rateMovie(movieId: Int, ratingValue: Double) {
+        disposable.add(
+            dataRepository.postMovieRating(movieId, Constant.API.API_KEY, getGuestSession(), RatingBody(ratingValue))
+                .doOnSubscribe { _movieDetailsState.value = RatingState.LoadRating }
+                .subscribe({
+                    _movieDetailsState.value = RatingState.SuccessRating
+                }, {
+                    _movieDetailsState.value = RatingState.ErrorRating("Couldn't rate the movie, please try again")
                 })
         )
     }

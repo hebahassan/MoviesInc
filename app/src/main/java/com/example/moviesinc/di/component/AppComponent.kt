@@ -6,8 +6,6 @@ import com.example.moviesinc.di.module.ActivityModule
 import com.example.moviesinc.di.module.AppModule
 import com.example.moviesinc.di.module.DomainModule
 import com.example.moviesinc.di.module.ViewModelFactoryModule
-import com.example.moviesinc.domain.local.PrefHelper
-import com.example.moviesinc.domain.repository.DataRepository
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
