@@ -3,6 +3,11 @@ package com.example.moviesinc.di.module
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.moviesinc.domain.local.ILocalHelper
+import com.example.moviesinc.domain.local.LocalHelper
+import com.example.moviesinc.domain.local.db.AppDatabase
+import com.example.moviesinc.domain.local.db.DatabaseHelper
+import com.example.moviesinc.domain.local.db.IDatabaseHelper
 import com.example.moviesinc.domain.local.pref.IPrefHelper
 import com.example.moviesinc.domain.local.pref.PrefHelper
 import com.example.moviesinc.domain.remote.IApiHelper
@@ -48,8 +53,20 @@ class DomainModule {
 
         @Singleton
         @Provides
-        fun provideIDataRepository(prefHelper: IPrefHelper, apiHelper: IApiHelper): IDataRepository {
-            return DataRepository(prefHelper, apiHelper)
+        fun provideIDatabaseHelper(appDatabase: AppDatabase): IDatabaseHelper {
+            return DatabaseHelper(appDatabase)
+        }
+
+        @Singleton
+        @Provides
+        fun provideILocalHelper(prefHelper: IPrefHelper, dbHelper: IDatabaseHelper): ILocalHelper {
+            return LocalHelper(prefHelper, dbHelper)
+        }
+
+        @Singleton
+        @Provides
+        fun provideIDataRepository(localHelper: ILocalHelper, apiHelper: IApiHelper): IDataRepository {
+            return DataRepository(localHelper, apiHelper)
         }
     }
 }

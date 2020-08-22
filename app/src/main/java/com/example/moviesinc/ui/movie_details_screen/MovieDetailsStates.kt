@@ -22,3 +22,10 @@ sealed class RatingState: MovieDetailsStates() {
 
     data class ErrorRating(val error: String): RatingState()
 }
+
+sealed class CheckState: MovieDetailsStates() {
+
+    data class ExistedRating(val ratingValue: Double): CheckState()
+
+    object NoRatingDetected: CheckState()
+}

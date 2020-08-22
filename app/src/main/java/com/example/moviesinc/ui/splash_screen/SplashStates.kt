@@ -2,7 +2,7 @@ package com.example.moviesinc.ui.splash_screen
 
 sealed class SplashStates {
 
-    object ExistedId: SplashStates()
+    object ExistedList: SplashStates()
 
     object Success: SplashStates()
 

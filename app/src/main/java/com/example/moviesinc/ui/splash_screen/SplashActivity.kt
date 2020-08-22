@@ -30,7 +30,7 @@ class SplashActivity: BaseActivity<SplashStates>(R.layout.activity_splash) {
 
     override fun render(state: SplashStates) {
         when(state) {
-            is SplashStates.ExistedId -> renderExistedId()
+            is SplashStates.ExistedList -> renderExistedData()
 
             is SplashStates.Success -> renderSuccess()
 
@@ -38,7 +38,7 @@ class SplashActivity: BaseActivity<SplashStates>(R.layout.activity_splash) {
         }
     }
 
-    private fun renderExistedId() {
+    private fun renderExistedData() {
         Handler().postDelayed({
             startActivity<MoviesActivity>()
             finish()
@@ -47,10 +47,11 @@ class SplashActivity: BaseActivity<SplashStates>(R.layout.activity_splash) {
 
     private fun renderSuccess() {
         startActivity<MoviesActivity>()
+        finish()
     }
 
     private fun renderError(error: String) {
-        toast(error)
         startActivity<MoviesActivity>()
+        finish()
     }
 }

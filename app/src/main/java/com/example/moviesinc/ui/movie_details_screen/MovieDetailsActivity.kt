@@ -34,13 +34,20 @@ class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_
     override fun init() {
         movieId = intent.getIntExtra(Constant.Extras.MOVIE_ID, 0)
 
-        setRatingBar()
+        viewModel.searchForMovie(movieId)
+        viewModel.getMovieDetails(movieId)
 
-        viewModel.movieDetailsState.observe(this, Observer {
+        viewModel.fetchDetailsState.observe(this, Observer {
             render(it)
         })
 
-        viewModel.getMovieDetails(movieId)
+        viewModel.checkState.observe(this, Observer {
+            render(it)
+        })
+
+        viewModel.ratingState.observe(this, Observer {
+            render(it)
+        })
     }
 
     override fun render(state: MovieDetailsStates) {
@@ -59,6 +66,12 @@ class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_
                 is RatingState.SuccessRating -> renderSuccessRating()
 
                 is RatingState.ErrorRating -> renderErrorRating(state.error)
+            }
+
+            is CheckState -> when(state) {
+                is CheckState.ExistedRating -> renderExistedRating(state.ratingValue)
+
+                is CheckState.NoRatingDetected -> renderNoRatingDetected()
             }
         }
     }
@@ -85,8 +98,8 @@ class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_
     }
 
     private fun renderSuccessRating() {
-        progressBar.visibility = View.GONE
         rating.setIsIndicator(true)
+        progressBar.visibility = View.GONE
     }
 
     private fun renderError(error: String) {
@@ -99,12 +112,14 @@ class MovieDetailsActivity : BaseActivity<MovieDetailsStates>(R.layout.activity_
         rating.rating = 0f
     }
 
-    private fun setRatingBar() {
-        if (rating.rating >= 1)
-            rating.setIsIndicator(true)
-        else
-            rating.setOnRatingBarChangeListener { _, rate, _ ->
-                viewModel.rateMovie(movieId, rate.toDouble())
-            }
+    private fun renderExistedRating(ratingValue: Double) {
+        rating.setIsIndicator(true)
+        rating.rating = ratingValue.toFloat()
+    }
+
+    private fun renderNoRatingDetected() {
+        rating.setOnRatingBarChangeListener { _, rate, _ ->
+            viewModel.rateMovie(movieId, rate.toDouble())
+        }
     }
 }

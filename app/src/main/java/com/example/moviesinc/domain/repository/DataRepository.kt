@@ -1,6 +1,7 @@
 package com.example.moviesinc.domain.repository
 
-import com.example.moviesinc.domain.local.pref.IPrefHelper
+import com.example.moviesinc.domain.local.ILocalHelper
+import com.example.moviesinc.domain.local.db.RatedMoviesEntity
 import com.example.moviesinc.domain.remote.IApiHelper
 import com.example.moviesinc.model.*
 import io.reactivex.Completable
@@ -10,24 +11,48 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class DataRepository @Inject constructor(
-    private val prefHelper: IPrefHelper, private val apiHelper: IApiHelper)
+    private val localHelper: ILocalHelper, private val apiHelper: IApiHelper)
     : IDataRepository {
 
     override fun saveGuestSession(sessionId: String) {
-        prefHelper.saveGuestSession(sessionId)
+        localHelper.saveGuestSession(sessionId)
     }
 
     override fun getGuestSession(): String {
-        return prefHelper.getGuestSession()
+        return localHelper.getGuestSession()
     }
 
     override fun saveImageConfig(imageConfig: ImageConfigurations) {
-        prefHelper.saveImageConfig(imageConfig)
+        localHelper.saveImageConfig(imageConfig)
     }
 
     override fun getImageConfig(): ImageConfigurations {
-        return prefHelper.getImageConfig()
+        return localHelper.getImageConfig()
     }
+
+
+    override fun insertRatedMoviesList(list: List<RatedMoviesEntity>) {
+        localHelper.insertRatedMoviesList(list)
+    }
+
+    override fun insertRatedMovie(ratedMovie: RatedMoviesEntity) {
+        localHelper.insertRatedMovie(ratedMovie)
+    }
+
+    override fun getSavedRatedMovies(): Observable<List<RatedMoviesEntity>> {
+        return localHelper.getRatedMovies()
+    }
+
+    override fun isMovieExisted(movieId: Int): Observable<Boolean> {
+        return localHelper.isMovieExisted(movieId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun searchForMovie(movieId: Int): Observable<RatedMoviesEntity> {
+        return localHelper.searchForMovie(movieId)
+    }
+
 
     override fun getConfiguration(apiKey: String): Observable<ConfigurationModel> {
         return apiHelper.getConfiguration(apiKey)
@@ -66,7 +91,7 @@ class DataRepository @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun getRatedMovies(sessionId: String, apiKey: String): Observable<RatedMoviesModel> {
+    override fun getGuestRatedMovies(sessionId: String, apiKey: String): Observable<RatedMoviesModel> {
         return apiHelper.getRatedMovies(sessionId, apiKey)
     }
 }

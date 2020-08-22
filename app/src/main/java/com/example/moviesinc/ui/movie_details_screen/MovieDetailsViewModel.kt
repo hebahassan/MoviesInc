@@ -2,6 +2,7 @@ package com.example.moviesinc.ui.movie_details_screen
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.moviesinc.domain.local.db.RatedMoviesEntity
 import com.example.moviesinc.domain.repository.IDataRepository
 import com.example.moviesinc.model.ImageConfigurations
 import com.example.moviesinc.model.MovieCreditsModel
@@ -17,8 +18,14 @@ import javax.inject.Inject
 
 class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDataRepository): BaseViewModel() {
 
-    private val _movieDetailsState = MutableLiveData<MovieDetailsStates>()
-    val movieDetailsState: LiveData<MovieDetailsStates> get() = _movieDetailsState
+    private val _fetchDetailsState = MutableLiveData<FetchDetailsState>()
+    val fetchDetailsState: LiveData<FetchDetailsState> get() = _fetchDetailsState
+
+    private val _ratingState = MutableLiveData<RatingState>()
+    val ratingState: LiveData<RatingState> get() = _ratingState
+
+    private val _checkState = MutableLiveData<CheckState>()
+    val checkState: LiveData<CheckState> get() = _checkState
 
     private val imageConfigurations: ImageConfigurations by lazy { getImageConfig() }
 
@@ -26,12 +33,41 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
 
     private fun getGuestSession() = dataRepository.getGuestSession()
 
+    private fun insertRatedMovie(ratedMovie: RatedMoviesEntity) = dataRepository.insertRatedMovie(ratedMovie)
+
     fun getPosterPath(): String {
         return "${imageConfigurations.secureBaseUrl}${imageConfigurations.posterSizes.first()}"
     }
 
     fun getProfilePath(): String {
         return "${imageConfigurations.secureBaseUrl}${imageConfigurations.profileSizes.first()}"
+    }
+
+    fun searchForMovie(movieId: Int) {
+        val connectable = dataRepository.isMovieExisted(movieId).replay()
+
+        disposable.add(
+            connectable.filter { it }
+                .observeOn(Schedulers.io())
+                .flatMap { dataRepository.searchForMovie(movieId) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    _checkState.value = CheckState.ExistedRating(it.rating)
+                }, {
+                    _checkState.value = CheckState.NoRatingDetected
+                })
+        )
+
+        connectable.connect()
+
+        disposable.add(
+            connectable.filter { !it }
+                .subscribe({
+                    _checkState.value = CheckState.NoRatingDetected
+                }, {
+                    _checkState.value = CheckState.NoRatingDetected
+                })
+        )
     }
 
     //TODO: combine 2 apis with append_to_request
@@ -45,12 +81,12 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
-                    _movieDetailsState.value = FetchDetailsState.Loading
+                    _fetchDetailsState.value = FetchDetailsState.Loading
                 }
                 .subscribe({
-                    _movieDetailsState.value = FetchDetailsState.SuccessDetails(it)
+                    _fetchDetailsState.value = FetchDetailsState.SuccessDetails(it)
                 }, {
-                    _movieDetailsState.value = FetchDetailsState.ErrorDetails("Error retrieving data")
+                    _fetchDetailsState.value = FetchDetailsState.ErrorDetails("Error retrieving data")
                 })
         )
     }
@@ -58,11 +94,17 @@ class MovieDetailsViewModel @Inject constructor(private val dataRepository: IDat
     fun rateMovie(movieId: Int, ratingValue: Double) {
         disposable.add(
             dataRepository.postMovieRating(movieId, Constant.API.API_KEY, getGuestSession(), RatingBody(ratingValue))
-                .doOnSubscribe { _movieDetailsState.value = RatingState.LoadRating }
+                .doOnSubscribe { _ratingState.value = RatingState.LoadRating }
+                .observeOn(Schedulers.io())
+                .doFinally {
+                    val ratedMovie = RatedMoviesEntity(movieId, ratingValue)
+                    insertRatedMovie(ratedMovie)
+                }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    _movieDetailsState.value = RatingState.SuccessRating
+                    _ratingState.value = RatingState.SuccessRating
                 }, {
-                    _movieDetailsState.value = RatingState.ErrorRating("Couldn't rate the movie, please try again")
+                    _ratingState.value = RatingState.ErrorRating("Couldn't rate the movie, please try again")
                 })
         )
     }
