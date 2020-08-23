@@ -35,6 +35,8 @@ class MoviesActivity: BaseActivity<MoviesStates>(R.layout.activity_movies),
         viewModel.moviesState.observe(this, Observer {
             render(it)
         })
+
+        viewModel.getNowPlayingMovies()
     }
 
     override fun render(state: MoviesStates) {

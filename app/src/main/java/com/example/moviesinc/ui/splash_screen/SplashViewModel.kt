@@ -24,9 +24,9 @@ class SplashViewModel @Inject constructor(private val dataRepository: IDataRepos
         }
     }
 
-    private fun getGuestSession() = dataRepository.getGuestSession()
-
     private fun saveGuestSession(sessionId: String) = dataRepository.saveGuestSession(sessionId)
+
+    private fun getGuestSession() = dataRepository.getGuestSession()
 
     private fun convertRatedMoviesToEntity(list: List<RatedMoviesResult>): List<RatedMoviesEntity> {
         val ratedMoviesEntityList = ArrayList<RatedMoviesEntity>()

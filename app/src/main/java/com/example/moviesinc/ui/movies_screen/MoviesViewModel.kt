@@ -14,10 +14,6 @@ class MoviesViewModel @Inject constructor(private val dataRepository: IDataRepos
     private val _moviesState = MutableLiveData<MoviesStates>()
     val moviesState: LiveData<MoviesStates> get() = _moviesState
 
-    init {
-        getNowPlayingMovies()
-    }
-
     private fun saveImageConfig(imageConfig: ImageConfigurations) = dataRepository.saveImageConfig(imageConfig)
 
     fun getImageConfig() = dataRepository.getImageConfig()
